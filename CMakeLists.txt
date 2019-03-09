@@ -351,10 +351,13 @@ if (USE_MKL)
 endif()
 
 if (MKL_FOUND)
+  message(STATUS "found mkl")
   if ( MKL_VERSION_STRING VERSION_LESS 11.2.0 )
     message(FATAL_ERROR "Gadgetron requires Intel MKL version >= 11.2.0")
   endif ()
   add_definitions(-DUSE_MKL)
+else ()
+  message(STATUS "didn't find mkl")
 endif ()
 find_package(BLAS)
 

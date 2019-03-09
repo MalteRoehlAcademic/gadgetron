@@ -20,7 +20,7 @@ if ( WIN32 )
     set(MKLROOT_PATH $ENV{MKLROOT_PATH} CACHE PATH "Where the MKL are stored")
   endif() 
 else ()
-    set(MKLROOT_PATH "/opt/intel" CACHE PATH "Where the MKL are stored")
+    set(MKLROOT_PATH "~/intel" CACHE PATH "Where the MKL are stored")
 endif ()
 
 if (EXISTS ${MKLROOT_PATH}/mkl)
