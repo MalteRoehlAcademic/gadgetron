@@ -14,12 +14,12 @@
 #include "vector_td.h"
 #include "complext.h"
 #include <complex>
-#include "../NFFT.h"
+#include "NFFT.h"
 
 #include <boost/shared_ptr.hpp>
 #include "hoArmadillo.h"
 
-#include "../nfft_export.h"
+#include "nfft_export.h"
 #include "hoNFFT_sparseMatrix.h"
 
 namespace Gadgetron{

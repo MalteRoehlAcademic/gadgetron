@@ -20,7 +20,7 @@ if (WIN32)
         set(MKLROOT_PATH $ENV{MKLROOT_PATH} CACHE PATH "Where the MKL are stored")
     endif ()
 else ()
-    set(MKLROOT_PATH "/opt/intel" CACHE PATH "Where the MKL are stored")
+    set(MKLROOT_PATH "~/intel" CACHE PATH "Where the MKL are stored")
 endif ()
 find_path(MKL_PATH "include/mkl.h" PATHS ${MKLROOT_PATH}/mkl "C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl")
 
