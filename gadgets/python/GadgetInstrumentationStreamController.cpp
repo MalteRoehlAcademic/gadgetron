@@ -143,7 +143,7 @@ namespace Gadgetron
     return GADGET_OK;
   }
 
-  template <class T1, class T2> int GadgetInstrumentationStreamController::return_image_two_messages(ACE_Message_Block* mb); //MR
+  template <class T1, class T2> int GadgetInstrumentationStreamController::return_image_two_messages(ACE_Message_Block* mb) //MR
   {
     static int counter = 0;
     GadgetContainerMessage<T1>* m1 = AsContainerMessage<T1>(mb);
@@ -249,7 +249,7 @@ namespace Gadgetron
 	  }
 	break;
       case (ISMRMRD::ISMRMRD_CXFLOAT):
-        m_tmp2 = AsContainerMessage<ISMRMRD::ImageHeader>(m0->cont()->cont());
+        GadgetContainerMessage<hoNDArray< std::complex<float> >>* m_tmp2 = AsContainerMessage<ISMRMRD::ImageHeader>(m0->cont()->cont());
         if (m_tmp2->getObjectPtr()->data_type == ISMRMRD::ISMRMRD_CXFLOAT)
         {
           if (0 != this->return_image_two_messages<ISMRMRD::ImageHeader, hoNDArray< std::complex<float> >>(m0->cont()) )
