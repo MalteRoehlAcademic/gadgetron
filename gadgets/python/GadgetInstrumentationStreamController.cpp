@@ -249,7 +249,7 @@ namespace Gadgetron
 	  }
 	break;
       case (ISMRMRD::ISMRMRD_CXFLOAT):
-        GadgetContainerMessage<hoNDArray< std::complex<float> >>* m_tmp2 = AsContainerMessage<ISMRMRD::ImageHeader>(m0->cont()->cont());
+        GadgetContainerMessage<hoNDArray< std::complex<float> >>* m_tmp2 = AsContainerMessage<hoNDArray< std::complex<float> >>(m0->cont()->cont());
         if (m_tmp2->getObjectPtr()->data_type == ISMRMRD::ISMRMRD_CXFLOAT)
         {
           if (0 != this->return_image_two_messages<ISMRMRD::ImageHeader, hoNDArray< std::complex<float> >>(m0->cont()) )
