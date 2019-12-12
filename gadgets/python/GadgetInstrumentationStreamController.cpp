@@ -249,8 +249,9 @@ namespace Gadgetron
 	  }
 	break;
       case (ISMRMRD::ISMRMRD_CXFLOAT):
-        GadgetContainerMessage<hoNDArray< std::complex<float> >>* m_tmp2 = AsContainerMessage<hoNDArray< std::complex<float> >>(m0->cont()->cont());
-        if (m_tmp2->getObjectPtr()->data_type == ISMRMRD::ISMRMRD_CXFLOAT)
+        //GadgetContainerMessage<hoNDArray< std::complex<float> >>* m_tmp2 = 0;
+        //m_tmp2 = AsContainerMessage<hoNDArray< std::complex<float> >>(m0->cont()->cont());
+        //if (m_tmp2)
         {
           if (0 != this->return_image_two_messages<ISMRMRD::ImageHeader, hoNDArray< std::complex<float> >>(m0->cont()) )
 	        {
@@ -259,15 +260,15 @@ namespace Gadgetron
 	          return GADGET_FAIL;
           } 
         }
-        else
-        {
-          if (0 != this->return_data<ISMRMRD::ImageHeader, hoNDArray< std::complex<float> >, ISMRMRD::MetaContainer >(m0->cont()) )
-	        {
-	          GERROR("Unable to convert and return GADGET_MESSAGE_ISMRMRD_IMAGE\n");
-	          m0->release();
-	          return GADGET_FAIL;
-          } 
-        }
+        //else #massive hack !!!!!!!!!!!!!
+        //{
+          //if (0 != this->return_data<ISMRMRD::ImageHeader, hoNDArray< std::complex<float> >, ISMRMRD::MetaContainer >(m0->cont()) )
+	        //{
+	        //  GERROR("Unable to convert and return GADGET_MESSAGE_ISMRMRD_IMAGE\n");
+	        //  m0->release();
+	        //  return GADGET_FAIL;
+          //} 
+        //}
 	      break;
       case (ISMRMRD::ISMRMRD_CXDOUBLE):
 	if (0 != this->return_data<ISMRMRD::ImageHeader, hoNDArray< std::complex<double> >, ISMRMRD::MetaContainer >(m0->cont()) )
