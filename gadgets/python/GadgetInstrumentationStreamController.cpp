@@ -143,6 +143,33 @@ namespace Gadgetron
     return GADGET_OK;
   }
 
+  template <class T1, class T2> int GadgetInstrumentationStreamController::return_image_two_messages(ACE_Message_Block* mb); //MR
+  {
+    static int counter = 0;
+    GadgetContainerMessage<T1>* m1 = AsContainerMessage<T1>(mb);
+    GadgetContainerMessage<T2>* m2 = AsContainerMessage<T2>(mb->cont());
+    GadgetContainerMessage<T2>* m3 = AsContainerMessage<T2>(m2->cont());
+
+    if (!m1 || !m2 || !m3) {
+      GERROR("Unable to convert input container messages");
+      return GADGET_FAIL;
+    }
+    
+    {
+      GILLock lock;
+      try {
+
+	  python_gadget_.attr("put_next")(*m1->getObjectPtr(),m2->getObjectPtr(),m3->getObjectPtr());
+
+      } catch(boost::python::error_already_set const &) {
+	GERROR("Passing data on to python wrapper gadget failed\n");
+	PyErr_Print();
+	return GADGET_FAIL;
+      }
+    }
+    return GADGET_OK;
+  }
+
   int GadgetInstrumentationStreamController::output_ready(ACE_Message_Block* mb)
   {
     GadgetContainerMessage<GadgetMessageIdentifier>* m0 = AsContainerMessage<GadgetMessageIdentifier>(mb);
@@ -222,14 +249,26 @@ namespace Gadgetron
 	  }
 	break;
       case (ISMRMRD::ISMRMRD_CXFLOAT):
-	if (0 != this->return_data<ISMRMRD::ImageHeader, hoNDArray< std::complex<float> >, ISMRMRD::MetaContainer >(m0->cont()) )
-	  {
-	    GERROR("Unable to convert and return GADGET_MESSAGE_ISMRMRD_IMAGE\n");
-	    m0->release();
-	    return GADGET_FAIL;
-	  }
-	break;
-	
+        m_tmp2 = AsContainerMessage<ISMRMRD::ImageHeader>(m0->cont()->cont());
+        if (m_tmp2->getObjectPtr()->data_type == ISMRMRD::ISMRMRD_CXFLOAT)
+        {
+          if (0 != this->return_image_two_messages<ISMRMRD::ImageHeader, hoNDArray< std::complex<float> >>(m0->cont()) )
+	        {
+	          GERROR("Unable to convert and return GADGET_MESSAGE_ISMRMRD_IMAGE\n");
+	          m0->release();
+	          return GADGET_FAIL;
+          } 
+        }
+        else
+        {
+          if (0 != this->return_data<ISMRMRD::ImageHeader, hoNDArray< std::complex<float> >, ISMRMRD::MetaContainer >(m0->cont()) )
+	        {
+	          GERROR("Unable to convert and return GADGET_MESSAGE_ISMRMRD_IMAGE\n");
+	          m0->release();
+	          return GADGET_FAIL;
+          } 
+        }
+	      break;
       case (ISMRMRD::ISMRMRD_CXDOUBLE):
 	if (0 != this->return_data<ISMRMRD::ImageHeader, hoNDArray< std::complex<double> >, ISMRMRD::MetaContainer >(m0->cont()) )
 	  {
@@ -357,10 +396,37 @@ namespace Gadgetron
     return put_data<ISMRMRD::ImageHeader, float >(img, arr, meta);
   }
 
+
   int GadgetInstrumentationStreamController::put_image_ushort(ISMRMRD::ImageHeader img, 
 							    boost::python::object arr, const char* meta)
   {
     return put_data<ISMRMRD::ImageHeader, unsigned short >(img, arr, meta);
   }
 
+  int GadgetInstrumentationStreamController::put_image_two_messages(ISMRMRD::ImageHeader img, 
+							    boost::python::object arr,  boost::python::object arr2)
+  {
+    GadgetContainerMessage< ISMRMRD::ImageHeader >* m1 = new GadgetContainerMessage< ISMRMRD::ImageHeader >;
+    memcpy(m1->getObjectPtr(), &img, sizeof(ISMRMRD::ImageHeader));
+
+    // this works because the python converter for hoNDArray<std::complex<float>>
+    // is registered in the python_toolbox
+    GadgetContainerMessage< hoNDArray< std::complex<float> > >* m2;
+    m2 = new GadgetContainerMessage< hoNDArray<std::complex<float> > >(
+            boost::python::extract<hoNDArray < std::complex<float> > >(arr)());
+    m1->cont(m2);
+
+    GadgetContainerMessage< hoNDArray< std::complex<float> > >* m3;
+    m3 = new GadgetContainerMessage< hoNDArray<std::complex<float> > >(
+            boost::python::extract<hoNDArray < std::complex<float> > >(arr2)());
+    m2->cont(m3);
+
+    ACE_Time_Value wait = ACE_OS::gettimeofday() + ACE_Time_Value(0,10000); //10ms from now
+    if (stream_.put(m1) == -1) {
+      GERROR("Failed to put stuff on stream, too long wait, %d\n",  ACE_OS::last_error () ==  EWOULDBLOCK);
+      m1->release();
+      return GADGET_FAIL;
+    }
+    return GADGET_OK;
+  }
 }

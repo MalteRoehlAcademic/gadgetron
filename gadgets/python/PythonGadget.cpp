@@ -69,9 +69,11 @@ namespace Gadgetron {
     {
         ISMRMRD::ImageHeader* h = hmi->getObjectPtr();
         GadgetContainerMessage< ISMRMRD::MetaContainer>* mmb = 0;
-
+        bool is_two_message=false;
         if (hmi->cont()) {
             mmb = AsContainerMessage< ISMRMRD::MetaContainer >(hmi->cont()->cont());
+            if (!mmb)
+            is_two_message = true;
         }
 
         switch (h->data_type) {
@@ -94,6 +96,9 @@ namespace Gadgetron {
             return this->process(hmi, AsContainerMessage< hoNDArray< double > >(hmi->cont()), mmb);
             break;
         case (ISMRMRD::ISMRMRD_CXFLOAT):
+        if(is_two_message)
+        return this->process_two_image(hmi, AsContainerMessage< hoNDArray< std::complex<float> > >(hmi->cont()), AsContainerMessage< hoNDArray< std::complex<float> > >(hmi->cont()->cont()));
+        else
             return this->process(hmi, AsContainerMessage< hoNDArray< std::complex<float> > >(hmi->cont()), mmb);
             break;
         case (ISMRMRD::ISMRMRD_CXDOUBLE):

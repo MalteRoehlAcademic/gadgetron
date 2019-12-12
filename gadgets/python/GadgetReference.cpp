@@ -148,4 +148,52 @@ namespace Gadgetron {
         return return_data<ISMRMRD::ImageHeader, unsigned short>(img, arr, meta);
     }
 
+    int GadgetReference::return_image_two_messages(ISMRMRD::ImageHeader img, boost::python::object arr, boost::python::object arr2)
+    {
+        GadgetContainerMessage< ISMRMRD::ImageHeader >* m1 = new GadgetContainerMessage< ISMRMRD::ImageHeader >;
+        memcpy(m1->getObjectPtr(), &img, sizeof(ISMRMRD::ImageHeader));
+
+        // this works because the python converter for hoNDArray<std::complex<float>>
+        // is registered in the python_toolbox
+        GadgetContainerMessage< hoNDArray< std::complex<float> > >* m2;
+
+        m2 = new GadgetContainerMessage< hoNDArray< std::complex<float> > >(boost::python::extract<hoNDArray < std::complex<float> > >(arr)());
+        m1->cont(m2);
+
+        GadgetContainerMessage< hoNDArray< std::complex<float> > >* m3;
+        m3 = new GadgetContainerMessage< hoNDArray< std::complex<float> > >(boost::python::extract<hoNDArray < std::complex<float> > >(arr2)());
+        m2->cont(m3);
+
+        if (gadget_) {
+            //ACE_Time_Value wait = ACE_OS::gettimeofday() + ACE_Time_Value(0,1000); //1ms from now
+            ACE_Time_Value nowait(ACE_OS::gettimeofday());
+            //GDEBUG("Returning data (%s)\n", gadget_->module()->name());
+            if (gadget_->next()->putq(m1, &nowait) == -1) {
+                m1->release();
+                //if (gadget_->next()->putq(m1) == -1) {
+                /*
+                  GDEBUG("Putting message on Queue failed (%s)\n", gadget_->module()->name());
+                  GDEBUG("Message Q: low mark %d, high mark %d, message bytes %d, message count %d\n",
+                  gadget_->next()->msg_queue()->low_water_mark(), gadget_->next()->msg_queue()->high_water_mark(),
+                  gadget_->next()->msg_queue()->message_bytes(),gadget_->next()->msg_queue()->message_count());
+                */
+                //GDEBUG("FAIL Returning data (%s)\n", gadget_->module()->name());
+                return GADGET_FAIL;
+            }
+            else {
+                //GDEBUG("SUCCESS Returning data (%s)\n", gadget_->module()->name());
+
+                return GADGET_OK;
+            }
+            //return gadget_->next()->putq(m1);
+        }
+        else {
+            GDEBUG("Data received from python, but no Gadget registered for output\n");
+            m1->release();
+            return GADGET_OK;
+        }
+
+        return GADGET_OK;
+    }
+
 }

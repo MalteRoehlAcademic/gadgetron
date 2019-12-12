@@ -30,6 +30,9 @@ namespace Gadgetron {
         int put_image_float(ISMRMRD::ImageHeader img, boost::python::object arr, const char* meta = 0);
         int put_image_ushort(ISMRMRD::ImageHeader img, boost::python::object arr, const char* meta = 0);
         int put_recondata(boost::python::object rec);
+
+        int put_image_two_messages(ISMRMRD::ImageHeader img, boost::python::object arr, boost::python::object arr2); //MR
+
         int put_ismrmrd_image_array(boost::python::object rec);
         int set_python_gadget(boost::python::object g)
         {
@@ -44,6 +47,8 @@ namespace Gadgetron {
     protected:
         boost::python::object python_gadget_;
         template <class T1, class T2, class T3> int return_data(ACE_Message_Block* mb);
+        template <class T1, class T2> int return_image_two_messages(ACE_Message_Block* mb);
+
         int return_recondata(ACE_Message_Block* mb);
         int return_ismrmrd_image_array(ACE_Message_Block* mb);
     };
@@ -127,6 +132,11 @@ namespace Gadgetron {
         int put_image_ushort_attr(ISMRMRD::ImageHeader img, boost::python::object arr, const char* meta = 0)
         {
             return cntrl_->put_image_ushort(img, arr, meta);
+        }
+
+        int put_image_two_messages(ISMRMRD::ImageHeader img, boost::python::object arr, boost::python::object arr2)
+        {
+            return cntrl_->put_image_two_messages(img, arr, arr2);
         }
 
         int put_recondata(boost::python::object rec) {

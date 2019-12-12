@@ -33,6 +33,8 @@ namespace Gadgetron{
     int return_image_ushort(ISMRMRD::ImageHeader img, boost::python::object arr);
     int return_image_ushort_attr(ISMRMRD::ImageHeader img, boost::python::object arr, const char* meta);
 
+    int return_image_two_messages(ISMRMRD::ImageHeader img, boost::python::object arr, boost::python::object arr2); //MR
+
   protected:
     Gadget* gadget_;
   };

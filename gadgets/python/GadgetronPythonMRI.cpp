@@ -20,6 +20,8 @@ BOOST_PYTHON_MODULE(GadgetronPythonMRI)
       .def("return_image_float_attr", &Gadgetron::GadgetReference::return_image_float_attr)
       .def("return_image_ushort", &Gadgetron::GadgetReference::return_image_ushort)
       .def("return_image_ushort_attr", &Gadgetron::GadgetReference::return_image_ushort_attr)
+
+      .def("return_image_two_messages", &Gadgetron::GadgetReference::return_image_two_messages)
       ;
 
     class_<Gadgetron::GadgetInstrumentationStreamControllerWrapper>("GadgetInstrumentationStreamController")
@@ -33,6 +35,9 @@ BOOST_PYTHON_MODULE(GadgetronPythonMRI)
       .def("put_image_float_attr", &Gadgetron::GadgetInstrumentationStreamControllerWrapper::put_image_float_attr)
       .def("put_image_ushort", &Gadgetron::GadgetInstrumentationStreamControllerWrapper::put_image_ushort)
       .def("put_image_ushort_attr", &Gadgetron::GadgetInstrumentationStreamControllerWrapper::put_image_ushort_attr)
+
+      .def("put_image_two_messages", &Gadgetron::GadgetInstrumentationStreamControllerWrapper::put_image_two_messages)
+
       .def("prepend_gadget", &Gadgetron::GadgetInstrumentationStreamControllerWrapper::prepend_gadget)
       .def("close", &Gadgetron::GadgetInstrumentationStreamControllerWrapper::close)
       .def("set_python_gadget", &Gadgetron::GadgetInstrumentationStreamControllerWrapper::set_python_gadget)

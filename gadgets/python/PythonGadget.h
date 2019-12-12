@@ -398,7 +398,55 @@ namespace Gadgetron {
             return GADGET_OK;
         }
 
+   template <typename H, typename D> int process_two_image(GadgetContainerMessage<H>* hmb,
+            GadgetContainerMessage< hoNDArray< D > >* dmb,
+            GadgetContainerMessage< hoNDArray< D > >* dmb2)
+        {
+            if (!dmb) {
+                GERROR("Received null pointer to data block");
+                return GADGET_FAIL;
+            }
 
+            // We want to avoid a deadlock for the Python GIL if this python call
+            // results in an output that the GadgetReference will not be able to
+            // get rid of.
+            // This is kind of a nasty busy wait, maybe we should add an event
+            // handler to the NotificationStrategy of the Q or something, but
+            // for now, this will do it.
+            while (this->next()->msg_queue()->is_full()) {
+                // GDEBUG("Gadget (%s) sleeping while downstream Gadget (%s) does some work\n",
+                //        this->module()->name(), this->next()->module()->name());
+                // Sleep for 10ms while the downstream Gadget does some work
+                ACE_Time_Value tv(0, 10000);
+                ACE_OS::sleep(tv);
+            }
+
+            H head = *hmb->getObjectPtr();
+            hoNDArray< D > *data = dmb->getObjectPtr();
+            hoNDArray< D > *data2 = dmb2->getObjectPtr();
+
+            GILLock lock;
+            try {
+                boost::python::object process_fn = class_.attr("process");
+                int res;
+
+                res = boost::python::extract<int>(process_fn(head, data, data2));
+
+                if (res != GADGET_OK) {
+                    GDEBUG("Gadget (%s) Returned from python call with error\n",
+                        this->module()->name());
+                    return GADGET_FAIL;
+                }
+                //Else we are done with this now.
+                hmb->release();
+            }
+            catch (boost::python::error_already_set const &) {
+                GDEBUG("Passing data on to python module failed\n");
+                std::string err = pyerr_to_string(); GERROR(err.c_str());
+                return GADGET_FAIL;
+            }
+            return GADGET_OK;
+        }
 
         virtual int process(ACE_Message_Block* mb);
 
