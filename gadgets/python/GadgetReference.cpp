@@ -37,6 +37,24 @@ namespace Gadgetron {
         }
     }
 
+    int GadgetReference::return_recondataspiral(boost::python::object rec) {
+        auto m1 = new GadgetContainerMessage<IsmrmrdReconDataSpiral>(boost::python::extract<IsmrmrdReconDataSpiral>(rec)());
+        if (gadget_) {
+            ACE_Time_Value nowait(ACE_OS::gettimeofday());
+            if (gadget_->next()->putq(m1, &nowait) == -1) {
+                m1->release();
+                return GADGET_FAIL;
+            }
+            else
+                return GADGET_OK;
+        }
+        else {
+            GDEBUG("IsmrmrdReconData returned from python, but no next gadget in chain");
+            m1->release();
+            return GADGET_OK;
+        }
+    }
+
     int GadgetReference::return_ismrmrd_image_array(boost::python::object rec)
     {
         auto m1 = new GadgetContainerMessage<IsmrmrdImageArray>(boost::python::extract<IsmrmrdImageArray>(rec)());

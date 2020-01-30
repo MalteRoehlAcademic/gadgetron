@@ -94,6 +94,21 @@ namespace Gadgetron
     return GADGET_OK;
   }
 
+  int GadgetInstrumentationStreamController::return_recondataspiral(ACE_Message_Block* mb){
+    GILLock lock;
+    auto m1 = AsContainerMessage<IsmrmrdReconDataSpiral>(mb);
+    try{
+      python_gadget_.attr("put_next")(*m1->getObjectPtr());
+    } catch(boost::python::error_already_set const &) {
+      GERROR("Passing recondataspiral on to python wrapper gadget failed\n");
+      std::string python_error = pyerr_to_string();
+      GDEBUG(python_error.c_str());
+      return GADGET_FAIL;
+
+    }
+    return GADGET_OK;
+  }
+
   int GadgetInstrumentationStreamController::return_ismrmrd_image_array(ACE_Message_Block* mb)
   {
       GILLock lock;
@@ -248,6 +263,14 @@ namespace Gadgetron
             return GADGET_FAIL;
       }
       break;
+      case (GADGET_MESSAGE_RECONDATASPIRAL):
+     if (this->return_recondataspiral(m0->cont()) == GADGET_FAIL)
+      {
+            GERROR("Unable to convert and return GADGET_MESSAGE_RECONDATASPIRAL");
+            m0->release();
+            return GADGET_FAIL;
+      }
+      break;
     case (GADGET_MESSAGE_CLOSE):
       break;
     default:
@@ -289,6 +312,16 @@ namespace Gadgetron
     auto m1 = new GadgetContainerMessage<IsmrmrdReconData>(boost::python::extract<IsmrmrdReconData>(rec)());
     if (stream_.put(m1) == -1) {
       GERROR("Failed to put IsmrmrdReconData on stream, too long wait, %d\n",  ACE_OS::last_error () ==  EWOULDBLOCK);
+      m1->release();
+      return GADGET_FAIL;
+    }
+    return GADGET_OK;
+  }
+
+  int GadgetInstrumentationStreamController::put_recondataspiral(boost::python::object rec){
+    auto m1 = new GadgetContainerMessage<IsmrmrdReconDataSpiral>(boost::python::extract<IsmrmrdReconDataSpiral>(rec)());
+    if (stream_.put(m1) == -1) {
+      GERROR("Failed to put IsmrmrdReconDataSpiral on stream, too long wait, %d\n",  ACE_OS::last_error () ==  EWOULDBLOCK);
       m1->release();
       return GADGET_FAIL;
     }

@@ -15,6 +15,7 @@
 #include <ismrmrd/meta.h>
 #include <boost/python.hpp>
 #include <boost/filesystem.hpp>
+#include "Generic_Spiral_Recon_Job.h"
 
 namespace Gadgetron {
 
@@ -83,6 +84,7 @@ namespace Gadgetron {
             register_converter< std::vector<ISMRMRD::MetaContainer> >();
             register_converter< std::vector<ISMRMRD::Waveform> >();
 
+            register_converter<IsmrmrdReconDataSpiral>();
             register_converter<IsmrmrdReconData>();
             register_converter<IsmrmrdImageArray>();
 
@@ -199,6 +201,68 @@ namespace Gadgetron {
 
             config_success_ = true;
 
+            return GADGET_OK;
+        }
+
+        int process(GadgetContainerMessage<IsmrmrdReconDataSpiral>* recon_data)
+        {
+            int err_ret = GADGET_FAIL;
+            if (this->error_ignored_mode.value())
+            {
+                // do not stop entire chain
+                err_ret = GADGET_OK;
+            }
+
+            if(!config_success_)
+            {
+                GERROR_STREAM("PythonGadget, process_config failed ... ");
+                if (this->next()->putq(recon_data) == -1)
+                {
+                    GERROR("PythonGadget::process, passing data on to next gadget");
+                    recon_data->release();
+                    return err_ret;
+                }
+                return err_ret;
+            }
+
+            if (!recon_data) {
+                GERROR("Received null pointer to data block");
+                return GADGET_FAIL;
+            }
+
+            // We want to avoid a deadlock for the Python GIL if this python call
+            // results in an output that the GadgetReference will not be able to
+            // get rid of.
+            // This is kind of a nasty busy wait, maybe we should add an event
+            // handler to the NotificationStrategy of the Q or something, but
+            // for now, this will do it.
+            while (this->next()->msg_queue()->is_full()) {
+                // GDEBUG("Gadget (%s) sleeping while downstream Gadget (%s) does some work\n",
+                //        this->module()->name(), this->next()->module()->name());
+                // Sleep for 10ms while the downstream Gadget does some work
+                ACE_Time_Value tv(0, 10000);
+                ACE_OS::sleep(tv);
+            }
+
+            GILLock lock;
+            try {
+                boost::python::object process_fn = class_.attr("process");
+                auto pyrecon_data = boost::python::object(*recon_data->getObjectPtr());
+                int res = boost::python::extract<int>(process_fn(pyrecon_data));
+                if (res != GADGET_OK) {
+                    GDEBUG("Gadget (%s) Returned from python call with error\n",
+                        this->module()->name());
+                    return GADGET_FAIL;
+                }
+                //Else we are done with this now.
+                recon_data->release();
+            }
+            catch (boost::python::error_already_set const &) {
+                GDEBUG("Passing data on to python module failed\n");
+                std::string err = pyerr_to_string();
+                GERROR(err.c_str());
+                return GADGET_FAIL;
+            }
             return GADGET_OK;
         }
 

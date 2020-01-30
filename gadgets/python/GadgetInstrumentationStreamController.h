@@ -7,7 +7,7 @@
 #include <ismrmrd/waveform.h>
 #include "python_toolbox.h"
 #include <boost/python.hpp>
-
+#include "Generic_Spiral_Recon_Job.h"
 namespace Gadgetron {
 
     class GadgetInstrumentationStreamController
@@ -30,6 +30,7 @@ namespace Gadgetron {
         int put_image_float(ISMRMRD::ImageHeader img, boost::python::object arr, const char* meta = 0);
         int put_image_ushort(ISMRMRD::ImageHeader img, boost::python::object arr, const char* meta = 0);
         int put_recondata(boost::python::object rec);
+        int put_recondataspiral(boost::python::object rec_spiral);
         int put_ismrmrd_image_array(boost::python::object rec);
         int set_python_gadget(boost::python::object g)
         {
@@ -45,6 +46,7 @@ namespace Gadgetron {
         boost::python::object python_gadget_;
         template <class T1, class T2, class T3> int return_data(ACE_Message_Block* mb);
         int return_recondata(ACE_Message_Block* mb);
+        int return_recondataspiral(ACE_Message_Block* mb);
         int return_ismrmrd_image_array(ACE_Message_Block* mb);
     };
 
@@ -71,6 +73,7 @@ namespace Gadgetron {
             register_converter<std::vector<ISMRMRD::Waveform> >();
 
             register_converter<IsmrmrdReconData>();
+            register_converter<IsmrmrdReconDataSpiral>();
             register_converter<IsmrmrdImageArray>();
 
             cntrl_ = new GadgetInstrumentationStreamController;
@@ -131,6 +134,10 @@ namespace Gadgetron {
 
         int put_recondata(boost::python::object rec) {
             return cntrl_->put_recondata(rec);
+        }
+
+        int put_recondataspiral(boost::python::object rec) {
+            return cntrl_->put_recondataspiral(rec);
         }
 
         int put_ismrmrd_image_array(boost::python::object rec) {

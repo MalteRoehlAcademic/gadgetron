@@ -82,6 +82,8 @@ class Gadget(object):
                             self.next_gadget.return_image_cplx(header,args[1].astype('complex64'))
                 elif len(args[0]) > 0 and isinstance(args[0][0],IsmrmrdReconBit): 
                     self.next_gadget.return_recondata(args[0])
+                elif len(args[0]) > 0 and isinstance(args[0][0],GenericSpiralReconJob): 
+                    self.next_gadget.return_recondataspiral(args[0])
                 else:
                     raise("Unsupported types when returning to Gadgetron framework")
             else:
@@ -146,10 +148,14 @@ class WrapperGadget(Gadget):
                     self.controller_.put_image_cplx_attr(header, args[0].astype('complex64'), args[1].serialize())
                 else:
                     self.controller_.put_image_cplx(header,args[0].astype('complex64'))
-        elif asattr(args[0],"__getitem__") and hasattr(args[0][0],"headers"):
+        elif hasattr(args[0],"__getitem__") and hasattr(args[0][0],"headers"):
             self.controller_.put_ismrmrd_image_array(args[0]);
         elif hasattr(args[0],"__getitem__") and hasattr(args[0][0],"data"):
-            self.controller_.put_recondata(args[0]);
+            
+            if hasattr(args[0],"__getitem__") and hasattr(args[0][0],"density"):
+                self.controller_.put_recondataspiral(args[0]);
+            else:
+                self.controller_.put_recondata(args[0]);
         else:
             raise("Unsupported types when sending data to Gadgetron framework")
         return 0
@@ -200,6 +206,19 @@ class SamplingLimit:
         self.center = 0
         self.max = 0
 
+class SpiralSamplingLimit:
+    def __init__(self):
+        self.min = 0
+        self.center = 0
+        self.max = 0
+
+class SegmentedMapping:
+    def __init__(self):
+        self.min = 0
+        self.max = 0
+        self.lower_boundary_bin = 0
+        self.upper_boundary_bin = 0
+
 class SamplingDescription:
     def __init__(self):
         self.encoded_FOV = (0.0,0.0,0.0)
@@ -208,6 +227,33 @@ class SamplingDescription:
         self.recon_matrix = (0,0,0)
         self.sampling_limits = (SamplingLimit(),SamplingLimit(),SamplingLimit())
 
+class SpiralSamplingDescription:
+    def __init__(self):
+        self.encoded_FOV = (0,0,0)
+        self.recon_FOV = (0,0,0)
+        self.encoded_resolution = 0.0
+        self.recon_resolution = 0.0
+        self.flags = 0
+        self.interleaves = 0
+        self.oversampling_factor = 0
+        self.kernel_width = 0
+        self.matrix_size_factor = 0
+        self.adc_sampling_time = 0
+        self.acceleration = 0
+        self.channels = 0
+        self.samples_per_interleave = 0
+        self.matrix = (0,0,0)
+        self.segmented_mapping = (SegmentedMapping(),SegmentedMapping())
+        self.total_number_of_segments = (0,0)
+        self.current_number_segments = (0,0)
+        self.sampling_limits = SpiralSamplingLimit()
+
+        self.slices = ()
+        self.averages = ()
+        self.repetitions = ()
+ 
+
+
 class IsmrmrdDataBuffered:
     def __init__(self,data,headers,sampling=SamplingDescription(),trajectory=None):
         self.data = data 
@@ -215,6 +261,27 @@ class IsmrmrdDataBuffered:
             self.trajectory =trajectory 
         self.headers =headers 
         self.sampling = sampling
+
+class GenericSpiralReconJob:
+    def __init__(self,data,headers,trajectory,density,sampling=SpiralSamplingDescription(),result=None,field_map=None,t2_star_map=None,csm=None,mask=None,motion_field=None,inverse_motion_field=None,reg=None):
+        self.data = data
+        self.headers = headers
+        self.trajectory = trajectory
+        self.density = density
+        self.sampling = sampling
+        self.result = result
+        self.field_map = field_map
+        self.t2_star_map = t2_star_map
+        self.csm = csm
+        self.mask = mask
+        self.motion_field = motion_field
+        self.inverse_motion_field = inverse_motion_field
+        self.reg = reg
+ 
+
+
+        
+        
 
 class IsmrmrdReconBit:
     def __init__(self,data,ref=None):

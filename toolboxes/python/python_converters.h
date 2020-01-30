@@ -31,6 +31,7 @@ void register_converter(void) {
 #include "python_ismrmrd_converter.h"
 #include "python_vector_converter.h"
 #include "python_IsmrmrdReconData_converter.h"
+#include "python_IsmrmrdSpiralReconData_converter.h"
 #include "python_IsmrmrdImageArray_converter.h"
 
 #endif // GADGETRON_PYTHON_MATH_CONVERSIONS_H

@@ -34,6 +34,7 @@ set( mri_core_header_files
         mri_core_export.h
         mri_core_def.h
         mri_core_data.h
+        Generic_Spiral_Recon_Job.h
         mri_core_utility.h
         mri_core_kspace_filter.h
         mri_core_grappa.h 

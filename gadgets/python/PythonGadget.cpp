@@ -33,6 +33,14 @@ namespace Gadgetron {
         }
 
         {
+            auto recon_data = AsContainerMessage<IsmrmrdReconDataSpiral>(mb);
+            if (recon_data) {
+                GDEBUG("Calling into python gadget with IsmrmrdReconDataSpiral\n");
+                return this->process(recon_data);
+            }
+        }
+
+        {
             auto array_data = AsContainerMessage<IsmrmrdImageArray>(mb);
             if (array_data)
             {
