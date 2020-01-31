@@ -221,6 +221,8 @@ struct IsmrmrdReconDataSpiral_from_python_object {
     result.trajectory_ = bp::extract<hoNDArray<float>>(pyDataSpiral.attr("trajectory"));
     result.density_ = bp::extract<hoNDArray<float>>(pyDataSpiral.attr("density"));
 
+    auto test3 = bp::extract<hoNDArray<std::complex<float>>>(pyDataSpiral.attr("data"));
+
     hoNDArray<std::complex<float>> test2;
     if (PyObject_HasAttrString(pyDataSpiral.ptr(),"result"))
     {
