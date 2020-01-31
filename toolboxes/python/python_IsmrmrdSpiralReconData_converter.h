@@ -43,15 +43,15 @@ private:
 
     auto result = bp::object();
     if (dataSpiral.result_.get_data_ptr())
-      auto result = bp::object(dataSpiral.result_) ;
+      result = bp::object(dataSpiral.result_) ;
 
     auto field_map = bp::object();
     if (dataSpiral.field_map_.get_data_ptr())
-      auto field_map = bp::object(dataSpiral.field_map_) ;
+      field_map = bp::object(dataSpiral.field_map_) ;
 
     auto t2_star_map = bp::object();
     if (dataSpiral.t2_star_map_.get_data_ptr())
-      auto t2_star_map = bp::object(dataSpiral.t2_star_map_) ;
+      t2_star_map = bp::object(dataSpiral.t2_star_map_) ;
 
     auto csm = bp::object();
     if (dataSpiral.csm_.get_data_ptr())
@@ -59,19 +59,19 @@ private:
     
     auto mask = bp::object();
     if (dataSpiral.mask_.get_data_ptr())
-      auto mask = bp::object(dataSpiral.mask_) ;
+      mask = bp::object(dataSpiral.mask_) ;
     
     auto motion_field = bp::object();
     if (dataSpiral.motion_field_.get_data_ptr())
-      auto motion_field = bp::object(dataSpiral.motion_field_) ;
+      motion_field = bp::object(dataSpiral.motion_field_) ;
     
     auto inverse_motion_field = bp::object();
     if (dataSpiral.inverse_motion_field_.get_data_ptr())
-      auto inverse_motion_field = bp::object(dataSpiral.inverse_motion_field_) ;
+      inverse_motion_field = bp::object(dataSpiral.inverse_motion_field_) ;
     
     auto reg = bp::object();
     if (dataSpiral.reg_.get_data_ptr())
-      auto reg = bp::object(dataSpiral.reg_) ;
+      reg = bp::object(dataSpiral.reg_) ;
 
  
     auto sampling = SpiralSamplingDescriptionToPython(dataSpiral.sampling_);
@@ -230,66 +230,23 @@ struct IsmrmrdReconDataSpiral_from_python_object {
     bool has_inverse_motion_field_ = bp::extract<bool>(pyDataSpiral.attr("has_inverse_motion_field_"));
     bool has_mask_ = bp::extract<bool>(pyDataSpiral.attr("has_mask_"));
 
-    /*
-    auto test3 = bp::extract<hoNDArray<std::complex<float>>>(pyDataSpiral.attr("data"));
-      if (test3.m_data.stage1.convertible != 0x0)
-      {
-        int dsf = 1;
-      }
-      else
-      {
-        int asd = 1;
-      }
-
-    hoNDArray<std::complex<float>> test2;
-    if (PyObject_HasAttrString(pyDataSpiral.ptr(),"result"))
-    {
-      auto r_res = bp::extract<hoNDArray<std::complex<float>>>(pyDataSpiral.attr("result"));
-      if (r_res.m_data.stage1.convertible != 0x0)
-      {
-        int dsf = 1;
-      }
-      else
-      {
-        int asd = 1;
-      }
-      
-      //test2 = bp::extract<hoNDArray<std::complex<float>>>(pyDataSpiral.attr("result"));
-      //if (!test.get_data_ptr())
-        //result.result_ = bp::extract<hoNDArray<std::complex<float>>>(pyDataSpiral.attr("result"));
-    }
-      */
-
-    if (PyObject_HasAttrString(pyDataSpiral.ptr(),"field_map"))
-    {
-      try 
-      {
-        result.field_map_ = bp::extract<hoNDArray<float>>(pyDataSpiral.attr("field_map"));
-      }
-      catch (...)
-      {
-        //result.field_map_ = hoNDArray<float>()
-      }
-    }
-      
-
-    if (PyObject_HasAttrString(pyDataSpiral.ptr(),"t2_star_map"))
+    if (has_result_)
+      result.result_ = bp::extract<hoNDArray<std::complex<float>>>(pyDataSpiral.attr("result"));
+    if (has_field_map_)
+      result.field_map_ = bp::extract<hoNDArray<float>>(pyDataSpiral.attr("field_map"));
+    if (has_t2_star_map_)
       result.t2_star_map_ = bp::extract<hoNDArray<float>>(pyDataSpiral.attr("t2_star_map"));
-
-    if (PyObject_HasAttrString(pyDataSpiral.ptr(),"csm"))
+    if (has_csm_)
       result.csm_ = bp::extract<hoNDArray<std::complex<float>>>(pyDataSpiral.attr("csm"));
-
-    if (PyObject_HasAttrString(pyDataSpiral.ptr(),"reg"))
+    if (has_reg_)
       result.reg_ = bp::extract<hoNDArray<std::complex<float>>>(pyDataSpiral.attr("reg"));
-
-    if (PyObject_HasAttrString(pyDataSpiral.ptr(),"motion_field"))
+    if (has_motion_field_)
       result.motion_field_ = bp::extract<hoNDArray<float>>(pyDataSpiral.attr("motion_field"));
-
-    if (PyObject_HasAttrString(pyDataSpiral.ptr(),"inverse_motion_field"))
+    if (has_inverse_motion_field_)
       result.inverse_motion_field_ = bp::extract<hoNDArray<float>>(pyDataSpiral.attr("inverse_motion_field"));
-
-    if (PyObject_HasAttrString(pyDataSpiral.ptr(),"mask"))
+    if (has_mask_)
       result.mask_ = bp::extract<hoNDArray<unsigned short>>(pyDataSpiral.attr("mask"));
+      
 
     auto pySampling = pyDataSpiral.attr("sampling");
     SpiralSamplingDescription sampling;

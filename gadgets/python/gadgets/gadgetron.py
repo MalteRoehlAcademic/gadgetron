@@ -278,6 +278,7 @@ class GenericSpiralReconJob:
         self.inverse_motion_field = inverse_motion_field
         self.reg = reg
 
+
         if result is None:
             self.has_result_ = False
         else:
