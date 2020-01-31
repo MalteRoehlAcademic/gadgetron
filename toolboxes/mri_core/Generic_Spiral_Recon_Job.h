@@ -168,8 +168,8 @@ namespace Gadgetron
     //7D, fixed order [Samples, Channels, Interleaves, Average, SLICE, Repetition]
     hoNDArray< std::complex<float> > data_;
     
-    //7D, fixed order [Samples, Interleaves, Average, SLICE, Repetition]
-    hoNDArray<floatd2> trajectory_;
+    //7D, fixed order [X,Y,Samples, Interleaves, Average, SLICE, Repetition]
+    hoNDArray<float> trajectory_;
 
     // 6D, density weights [Samples, Interleaves, Average, SLICE, Repetition]
     hoNDArray<float>  density_;
@@ -218,7 +218,7 @@ namespace Gadgetron
             if (this->trajectory_.get_data_ptr())
                 if (this->trajectory_.delete_data_on_destruct()) this->trajectory_.clear();
              else 
-                this->trajectory_ = hoNDArray<floatd2>();
+                this->trajectory_ = hoNDArray<float>();
             this->trajectory_.copyFrom(obj.trajectory_);
         }
 
@@ -330,12 +330,12 @@ namespace Gadgetron
             if (this->trajectory_.get_data_ptr())
                 if (this->trajectory_.delete_data_on_destruct()) this->trajectory_.clear();
              else 
-                this->trajectory_ = hoNDArray<floatd2>();
+                this->trajectory_ = hoNDArray<float>();
             this->trajectory_.copyFrom(other.trajectory_);
         }
         else
         {
-            this->trajectory_ = hoNDArray<floatd2>();
+            this->trajectory_ = hoNDArray<float>();
         }
 
         if (other.density_.get_data_ptr())
