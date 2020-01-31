@@ -222,19 +222,46 @@ struct IsmrmrdReconDataSpiral_from_python_object {
     result.density_ = bp::extract<hoNDArray<float>>(pyDataSpiral.attr("density"));
 
     auto test3 = bp::extract<hoNDArray<std::complex<float>>>(pyDataSpiral.attr("data"));
+      if (test3.m_data.stage1.convertible != 0x0)
+      {
+        int dsf = 1;
+      }
+      else
+      {
+        int asd = 1;
+      }
 
     hoNDArray<std::complex<float>> test2;
     if (PyObject_HasAttrString(pyDataSpiral.ptr(),"result"))
     {
-      auto test = bp::extract<hoNDArray<std::complex<float>>>(pyDataSpiral.attr("result"));
-      test2 = bp::extract<hoNDArray<std::complex<float>>>(pyDataSpiral.attr("result"));
+      auto r_res = bp::extract<hoNDArray<std::complex<float>>>(pyDataSpiral.attr("result"));
+      if (r_res.m_data.stage1.convertible != 0x0)
+      {
+        int dsf = 1;
+      }
+      else
+      {
+        int asd = 1;
+      }
+      
+      //test2 = bp::extract<hoNDArray<std::complex<float>>>(pyDataSpiral.attr("result"));
       //if (!test.get_data_ptr())
         //result.result_ = bp::extract<hoNDArray<std::complex<float>>>(pyDataSpiral.attr("result"));
     }
       
 
     if (PyObject_HasAttrString(pyDataSpiral.ptr(),"field_map"))
-      result.field_map_ = bp::extract<hoNDArray<float>>(pyDataSpiral.attr("field_map"));
+    {
+      try 
+      {
+        result.field_map_ = bp::extract<hoNDArray<float>>(pyDataSpiral.attr("field_map"));
+      }
+      catch (...)
+      {
+        //result.field_map_ = hoNDArray<float>()
+      }
+    }
+      
 
     if (PyObject_HasAttrString(pyDataSpiral.ptr(),"t2_star_map"))
       result.t2_star_map_ = bp::extract<hoNDArray<float>>(pyDataSpiral.attr("t2_star_map"));
