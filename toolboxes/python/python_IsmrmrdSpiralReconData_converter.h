@@ -55,7 +55,7 @@ private:
 
     auto csm = bp::object();
     if (dataSpiral.csm_.get_data_ptr())
-      auto csm = bp::object(dataSpiral.csm_) ;
+      csm = bp::object(dataSpiral.csm_) ;
     
     auto mask = bp::object();
     if (dataSpiral.mask_.get_data_ptr())
