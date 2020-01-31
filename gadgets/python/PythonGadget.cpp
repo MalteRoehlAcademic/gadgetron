@@ -22,6 +22,8 @@ namespace Gadgetron {
             else
             {
                 GadgetContainerMessage< ISMRMRD::MetaContainer>* mmb = AsContainerMessage< ISMRMRD::MetaContainer >(dmb->cont());
+                if (!mmb->getObjectPtr())
+                    mmb = new  GadgetContainerMessage< ISMRMRD::MetaContainer>();
                 return this->process(hma, dmb, mmb);
             }
 
@@ -89,6 +91,8 @@ namespace Gadgetron {
 
         if (hmi->cont()) {
             mmb = AsContainerMessage< ISMRMRD::MetaContainer >(hmi->cont()->cont());
+            if (!mmb->getObjectPtr())
+                mmb = new  GadgetContainerMessage< ISMRMRD::MetaContainer>();
         }
 
         switch (h->data_type) {
