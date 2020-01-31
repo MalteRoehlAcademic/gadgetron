@@ -92,7 +92,7 @@ namespace Gadgetron {
         if (hmi->cont()) {
             mmb = AsContainerMessage< ISMRMRD::MetaContainer >(hmi->cont()->cont());
             if (!mmb)
-                mmb = new  GadgetContainerMessage< ISMRMRD::MetaContainer>();
+                mmb = new GadgetContainerMessage< ISMRMRD::MetaContainer>();
         }
 
         switch (h->data_type) {
