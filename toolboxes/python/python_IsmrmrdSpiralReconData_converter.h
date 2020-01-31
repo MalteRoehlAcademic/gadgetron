@@ -220,7 +220,7 @@ struct IsmrmrdReconDataSpiral_from_python_object {
     result.data_ = bp::extract<hoNDArray<std::complex<float>>>(pyDataSpiral.attr("data"));
     result.trajectory_ = bp::extract<hoNDArray<float>>(pyDataSpiral.attr("trajectory"));
     result.density_ = bp::extract<hoNDArray<float>>(pyDataSpiral.attr("density"));
-
+    /*
     auto test3 = bp::extract<hoNDArray<std::complex<float>>>(pyDataSpiral.attr("data"));
       if (test3.m_data.stage1.convertible != 0x0)
       {
@@ -248,7 +248,7 @@ struct IsmrmrdReconDataSpiral_from_python_object {
       //if (!test.get_data_ptr())
         //result.result_ = bp::extract<hoNDArray<std::complex<float>>>(pyDataSpiral.attr("result"));
     }
-      
+      */
 
     if (PyObject_HasAttrString(pyDataSpiral.ptr(),"field_map"))
     {
