@@ -141,14 +141,17 @@ namespace Gadgetron
     
     {
       GILLock lock;
-      try {
-	if (m3) {
-	  std::stringstream str;
-	  ISMRMRD::serialize(*m3->getObjectPtr(), str);
-	  python_gadget_.attr("put_next")(*m1->getObjectPtr(),m2->getObjectPtr(),str.str());
-	} else {
-	  python_gadget_.attr("put_next")(*m1->getObjectPtr(),m2->getObjectPtr());
-	}
+      try 
+      {
+	      if (m3) 
+        {
+          auto type_id_m3 = typeid(T3).name();
+	        std::stringstream str;
+	        ISMRMRD::serialize(*m3->getObjectPtr(), str);
+	        python_gadget_.attr("put_next")(*m1->getObjectPtr(),m2->getObjectPtr(),str.str());
+	      } else {
+	      python_gadget_.attr("put_next")(*m1->getObjectPtr(),m2->getObjectPtr());
+	      }
       } catch(boost::python::error_already_set const &) {
 	GERROR("Passing data on to python wrapper gadget failed\n");
 	PyErr_Print();
@@ -171,12 +174,13 @@ namespace Gadgetron
 
     switch (m0->getObjectPtr()->id) {
     case (GADGET_MESSAGE_ACQUISITION):
+      
       if (0 != this->return_data<ISMRMRD::AcquisitionHeader, hoNDArray< std::complex<float> >, ISMRMRD::MetaContainer >(m0->cont()) )
-	{
-	  GERROR("Unable to convert and return GADGET_MESSAGE_ACQUISITON\n");
-	  m0->release();
-	  return GADGET_FAIL;
-	}
+      {
+        GERROR("Unable to convert and return GADGET_MESSAGE_ACQUISITON\n");
+        m0->release();
+        return GADGET_FAIL;
+      }
       break;
 
     case (GADGET_MESSAGE_ISMRMRD_IMAGE):
