@@ -278,45 +278,45 @@ class GenericSpiralReconJob:
         self.inverse_motion_field = inverse_motion_field
         self.reg = reg
 
-        if result:
-            self.has_result_ = True
-        else:
+        if result is None:
             self.has_result_ = False
-
-        if field_map:
-            self.has_field_map_ = True
         else:
+            self.has_result_ = True
+
+        if field_map is None:
             self.has_field_map_ = False
-
-        if t2_star_map:
-            self.has_t2_star_map_ = True
         else:
+            self.has_field_map_ = True
+
+        if t2_star_map is None:
             self.has_t2_star_map_ = False
-
-        if csm:
-            self.has_csm_ = True
         else:
+            self.has_t2_star_map_ = True
+
+        if csm is None:
             self.has_csm_ = False
-
-        if reg:
-            self.has_reg_ = True
         else:
+            self.has_csm_ = True
+
+        if reg is None:
             self.has_reg_ = False
-
-        if motion_field:
-            self.has_motion_field_ = True
         else:
+            self.has_reg_ = True
+
+        if motion_field is None:
             self.has_motion_field_ = False
-
-        if inverse_motion_field:
-            self.has_inverse_motion_field_ = True
         else:
+            self.has_motion_field_ = True
+
+        if inverse_motion_field is None:
             self.has_inverse_motion_field_ = False
-
-        if mask:
-            self.has_mask_ = True
         else:
+            self.has_inverse_motion_field_ = True
+
+        if mask is None:
             self.has_mask_ = False
+        else:
+            self.has_mask_ = True
 
     
 
