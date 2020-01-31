@@ -104,17 +104,19 @@ private:
         throw std::runtime_error(err);
     }
 
-    bp::object get_iter_sl = bp::iterator<std::vector<uint16_t> >();
-    bp::object iter_sl = get_iter_sl(sD.slices_);
-    bp::tuple sl(iter_sl);
 
-    bp::object get_iter_av = bp::iterator<std::vector<uint16_t> >();
-    bp::object iter_av = get_iter_av(sD.averages_);
-    bp::tuple av(iter_av);
+    auto sl = bp::list();
+    for (size_t ii =0; ii < sD.slices_.size();ii++)
+      sl.append(sD.slices_[ii]);
 
-    bp::object get_iter_re = bp::iterator<std::vector<uint16_t> >();
-    bp::object iter_re = get_iter_re(sD.repetitions_);
-    bp::tuple re(iter_re);
+    auto av = bp::list();
+    for (size_t ii =0; ii < sD.averages_.size();ii++)
+      av.append(sD.averages_[ii]);
+
+    auto re = bp::list();
+    for (size_t ii =0; ii < sD.repetitions_.size();ii++)
+      re.append(sD.repetitions_[ii]);
+
 
     result.attr("slices") = sl;
     result.attr("averages") = av;
@@ -246,23 +248,31 @@ struct IsmrmrdReconDataSpiral_from_python_object {
       sampling.current_number_segments_[i] = bp::extract<uint16_t>(pySampling.attr("current_number_segments")[i]);
 
 
-    /*
-    bp::object get_iter_sl = py::iterator<std::vector<uint16_t> >();
-    bp::object iter_sl = get_iter_sl(sD.slices_);
-    bp::tuple sl(iter_sl);
 
-    bp::object get_iter_av = py::iterator<std::vector<uint16_t> >();
-    bp::object iter_av = get_iter_av(sD.averages_);
-    bp::tuple av(iter_av);
+    auto pySlices = pyDataSpiral.attr("slices");
+    auto pyAverages = pyDataSpiral.attr("averages");
+    auto pyRepetitions = pyDataSpiral.attr("repetitions");
 
-    bp::object get_iter_re = py::iterator<std::vector<uint16_t> >();
-    bp::object iter_re = get_iter_re(sD.repetitions_);
-    bp::tuple re(iter_re);
+    auto lengthsl = bp::len(pySlices);
+    auto lengthav = bp::len(pyAverages);
+    auto lengthrep = bp::len(pyRepetitions);
 
-    result.attr("slices") = sl;
-    result.attr("averages") = av;
-    result.attr("repetitions") = re;
-    */
+    sampling.averages_.resize(lengthav);
+    sampling.slices_.resize(lengthsl);
+    sampling.repetitions_.resize(lengthrep);
+
+    auto sl = bp::list();
+    for (size_t ii =0; ii < lengthsl;ii++)
+      sampling.slices_[ii] = bp::extract<uint16_t>(pySampling.attr("slices")[ii]);
+
+    auto av = bp::list();
+    for (size_t ii =0; ii < lengthav;ii++)
+      sampling.averages_[ii] = bp::extract<uint16_t>(pySampling.attr("averages")[ii]);
+
+    auto re = bp::list();
+    for (size_t ii =0; ii < lengthrep;ii++)
+      sampling.repetitions_[ii] = bp::extract<uint16_t>(pySampling.attr("repetitions")[ii]);
+
 
 
     auto pySLs = pySampling.attr("sampling_limit");
