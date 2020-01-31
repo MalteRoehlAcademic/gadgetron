@@ -145,10 +145,40 @@ namespace Gadgetron
       {
 	      if (m3) 
         {
-          auto type_id_m3 = typeid(T3).name();
 	        std::stringstream str;
 	        ISMRMRD::serialize(*m3->getObjectPtr(), str);
 	        python_gadget_.attr("put_next")(*m1->getObjectPtr(),m2->getObjectPtr(),str.str());
+	      } else {
+	      python_gadget_.attr("put_next")(*m1->getObjectPtr(),m2->getObjectPtr());
+	      }
+      } catch(boost::python::error_already_set const &) {
+	GERROR("Passing data on to python wrapper gadget failed\n");
+	PyErr_Print();
+	return GADGET_FAIL;
+      }
+    }
+    return GADGET_OK;
+  }
+
+  template <class T1, class T2, class T3> int GadgetInstrumentationStreamController::return_data_traj(ACE_Message_Block* mb)
+  {
+    static int counter = 0;
+    GadgetContainerMessage<T1>* m1 = AsContainerMessage<T1>(mb);
+    GadgetContainerMessage<T2>* m2 = AsContainerMessage<T2>(mb->cont());
+    GadgetContainerMessage<T3>* m3 = AsContainerMessage<T3>(m2->cont());
+
+    if (!m1 || !m2) {
+      GERROR("Unable to convert input container messages");
+      return GADGET_FAIL;
+    }
+    
+    {
+      GILLock lock;
+      try 
+      {
+	      if (m3) 
+        {
+	        python_gadget_.attr("put_next")(*m1->getObjectPtr(),m2->getObjectPtr(),m3->getObjectPtr());
 	      } else {
 	      python_gadget_.attr("put_next")(*m1->getObjectPtr(),m2->getObjectPtr());
 	      }
@@ -376,10 +406,45 @@ namespace Gadgetron
     return GADGET_OK;
   }
 
+  template<class TH, class TD, class TE>
+  int GadgetInstrumentationStreamController::put_data_traj(TH header, boost::python::object arr, boost::python::object arr2)
+  {
+    GadgetContainerMessage< TH >* m1 = new GadgetContainerMessage< TH >;
+    memcpy(m1->getObjectPtr(), &header, sizeof(TH));
+
+    // this works because the python converter for hoNDArray<std::complex<float>>
+    // is registered in the python_toolbox
+    GadgetContainerMessage< hoNDArray< TD > >* m2;
+    m2 = new GadgetContainerMessage< hoNDArray< TD > >(
+            boost::python::extract<hoNDArray < TD > >(arr)());
+    m1->cont(m2);
+
+    GadgetContainerMessage< hoNDArray< TE > >* m3;
+    m3 = new GadgetContainerMessage< hoNDArray< TE > >(
+            boost::python::extract<hoNDArray < TE > >(arr2)());
+    m2->cont(m3);
+    
+
+
+    ACE_Time_Value wait = ACE_OS::gettimeofday() + ACE_Time_Value(0,10000); //10ms from now
+    if (stream_.put(m1) == -1) {
+      GERROR("Failed to put stuff on stream, too long wait, %d\n",  ACE_OS::last_error () ==  EWOULDBLOCK);
+      m1->release();
+      return GADGET_FAIL;
+    }
+    return GADGET_OK;
+  }
+
   int GadgetInstrumentationStreamController::put_acquisition(ISMRMRD::AcquisitionHeader acq, 
 							     boost::python::object arr, const char* meta)
   {
     return put_data<ISMRMRD::AcquisitionHeader, std::complex<float> >(acq, arr);
+  }
+
+  int GadgetInstrumentationStreamController::put_acquisition_traj(ISMRMRD::AcquisitionHeader acq, 
+							     boost::python::object arr, boost::python::object arr2)
+  {
+    return put_data_traj<ISMRMRD::AcquisitionHeader, std::complex<float>,float >(acq, arr,arr2);
   }
 
   int GadgetInstrumentationStreamController::put_image_cplx(ISMRMRD::ImageHeader img, 

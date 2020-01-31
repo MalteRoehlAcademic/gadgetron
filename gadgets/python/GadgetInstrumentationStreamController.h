@@ -22,10 +22,11 @@ namespace Gadgetron {
             const char* classname);
 
         virtual ~GadgetInstrumentationStreamController();
-
+        template<class TH, class TD,class TE> int put_data_traj(TH header, boost::python::object arr, boost::python::object arr2);
         template<class TH, class TD> int put_data(TH header, boost::python::object arr, const char* meta = 0);
         int put_config(const char* config);
         int put_acquisition(ISMRMRD::AcquisitionHeader acq, boost::python::object arr, const char* meta = 0);
+        int put_acquisition_traj(ISMRMRD::AcquisitionHeader acq, boost::python::object arr, boost::python::object arr2);
         int put_image_cplx(ISMRMRD::ImageHeader img, boost::python::object arr, const char* meta = 0);
         int put_image_float(ISMRMRD::ImageHeader img, boost::python::object arr, const char* meta = 0);
         int put_image_ushort(ISMRMRD::ImageHeader img, boost::python::object arr, const char* meta = 0);
@@ -45,6 +46,7 @@ namespace Gadgetron {
     protected:
         boost::python::object python_gadget_;
         template <class T1, class T2, class T3> int return_data(ACE_Message_Block* mb);
+        template <class T1, class T2, class T3> int return_data_traj(ACE_Message_Block* mb);
         int return_recondata(ACE_Message_Block* mb);
         int return_recondataspiral(ACE_Message_Block* mb);
         int return_ismrmrd_image_array(ACE_Message_Block* mb);
@@ -99,6 +101,11 @@ namespace Gadgetron {
         int put_acquisition(ISMRMRD::AcquisitionHeader acq, boost::python::object arr)
         {
             return cntrl_->put_acquisition(acq, arr);
+        }
+
+        int put_acquisition_traj(ISMRMRD::AcquisitionHeader acq, boost::python::object arr, boost::python::object arr2)
+        {
+            return cntrl_->put_acquisition_traj(acq, arr,arr2);
         }
 
 
