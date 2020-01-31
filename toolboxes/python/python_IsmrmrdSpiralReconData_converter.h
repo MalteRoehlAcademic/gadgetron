@@ -190,7 +190,7 @@ struct IsmrmrdReconDataSpiral_from_python_object {
 
     result.headers_ = bp::extract<hoNDArray<ISMRMRD::AcquisitionHeader>>(pyDataSpiral.attr("headers"));
     result.data_ = bp::extract<hoNDArray<std::complex<float>>>(pyDataSpiral.attr("data"));
-    result.trajectory_ = bp::extract<hoNDArray<floatd2>>(pyDataSpiral.attr("trajectory"));
+    result.trajectory_ = bp::extract<hoNDArray<float>>(pyDataSpiral.attr("trajectory"));
     result.density_ = bp::extract<hoNDArray<float>>(pyDataSpiral.attr("density"));
 
     if (PyObject_HasAttrString(pyDataSpiral.ptr(),"result"))
