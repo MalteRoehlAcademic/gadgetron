@@ -224,7 +224,7 @@ struct IsmrmrdReconDataSpiral_from_python_object {
 
     if (PyObject_HasAttrString(pyDataSpiral.ptr(),"result"))
     {
-      bp::object test = bp::extract<hoNDArray<std::complex<float>>>(pyDataSpiral.attr("result"));
+      auto test = bp::extract<hoNDArray<std::complex<float>>>(pyDataSpiral.attr("result"));
       if (!test.is_none())
         result.result_ = bp::extract<hoNDArray<std::complex<float>>>(pyDataSpiral.attr("result"));
     }
