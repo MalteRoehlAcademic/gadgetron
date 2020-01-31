@@ -278,27 +278,22 @@ struct IsmrmrdReconDataSpiral_from_python_object {
 
 
 
-    auto pySlices = pyDataSpiral.attr("slices");
-    auto pyAverages = pyDataSpiral.attr("averages");
-    auto pyRepetitions = pyDataSpiral.attr("repetitions");
-
-    auto lengthsl = bp::len(pySlices);
-    auto lengthav = bp::len(pyAverages);
-    auto lengthrep = bp::len(pyRepetitions);
+    uint16_t lengthsl = bp::extract<uint16_t>(pySampling.attr("number_of_slices"));
+    uint16_t lengthav = bp::extract<uint16_t>(pySampling.attr("number_of_averages"));
+    uint16_t lengthrep = bp::extract<uint16_t>(pySampling.attr("number_of_repetitions"));
 
     sampling.averages_.resize(lengthav);
     sampling.slices_.resize(lengthsl);
     sampling.repetitions_.resize(lengthrep);
 
-    auto sl = bp::list();
+   
     for (size_t ii =0; ii < lengthsl;ii++)
       sampling.slices_[ii] = bp::extract<uint16_t>(pySampling.attr("slices")[ii]);
 
-    auto av = bp::list();
+
     for (size_t ii =0; ii < lengthav;ii++)
       sampling.averages_[ii] = bp::extract<uint16_t>(pySampling.attr("averages")[ii]);
 
-    auto re = bp::list();
     for (size_t ii =0; ii < lengthrep;ii++)
       sampling.repetitions_[ii] = bp::extract<uint16_t>(pySampling.attr("repetitions")[ii]);
 

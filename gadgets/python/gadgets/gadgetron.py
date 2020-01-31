@@ -278,6 +278,10 @@ class GenericSpiralReconJob:
         self.inverse_motion_field = inverse_motion_field
         self.reg = reg
 
+        self.number_of_slices = len(sampling.slices)
+        self.number_of_averages = len(sampling.averages)
+        self.number_of_repetitions = len(sampling.repetitions)
+
 
         if result is None:
             self.has_result_ = False
