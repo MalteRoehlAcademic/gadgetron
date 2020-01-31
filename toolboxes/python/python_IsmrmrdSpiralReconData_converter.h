@@ -40,14 +40,40 @@ private:
     auto headers = boost::python::object(dataSpiral.headers_);
     auto trajectory = bp::object(dataSpiral.trajectory_);
     auto density = bp::object(dataSpiral.density_);
-    auto result = bp::object(dataSpiral.result_) ;
-    auto field_map =  bp::object(dataSpiral.field_map_) ;
-    auto t2_star_map =  bp::object(dataSpiral.t2_star_map_) ;
-    auto csm =  bp::object(dataSpiral.csm_) ;
-    auto mask = bp::object(dataSpiral.mask_) ;
-    auto motion_field = bp::object(dataSpiral.motion_field_) ;
-    auto inverse_motion_field = bp::object(dataSpiral.inverse_motion_field_) ;
-    auto reg = bp::object(dataSpiral.reg_) ;
+
+    auto result = bp::object();
+    if (dataSpiral.result_.get_data_ptr())
+      auto result = bp::object(dataSpiral.result_) ;
+
+    auto field_map = bp::object();
+    if (dataSpiral.field_map_.get_data_ptr())
+      auto field_map = bp::object(dataSpiral.field_map_) ;
+
+    auto t2_star_map = bp::object();
+    if (dataSpiral.t2_star_map_.get_data_ptr())
+      auto t2_star_map = bp::object(dataSpiral.t2_star_map_) ;
+
+    auto csm = bp::object();
+    if (dataSpiral.csm_.get_data_ptr())
+      auto csm = bp::object(dataSpiral.csm_) ;
+    
+    auto mask = bp::object();
+    if (dataSpiral.mask_.get_data_ptr())
+      auto mask = bp::object(dataSpiral.mask_) ;
+    
+    auto motion_field = bp::object();
+    if (dataSpiral.motion_field_.get_data_ptr())
+      auto motion_field = bp::object(dataSpiral.motion_field_) ;
+    
+    auto inverse_motion_field = bp::object();
+    if (dataSpiral.inverse_motion_field_.get_data_ptr())
+      auto inverse_motion_field = bp::object(dataSpiral.inverse_motion_field_) ;
+    
+    auto reg = bp::object();
+    if (dataSpiral.reg_.get_data_ptr())
+      auto reg = bp::object(dataSpiral.reg_) ;
+    
+ 
     auto sampling = SpiralSamplingDescriptionToPython(dataSpiral.sampling_);
 
     auto buffer = pygadgetron.attr("GenericSpiralReconJob")(data,headers,trajectory,density,sampling,result,field_map,t2_star_map,csm,mask
