@@ -246,7 +246,7 @@ namespace Gadgetron {
 
             GILLock lock;
             try {
-                boost::python::object process_fn = class_.attr("process");
+                boost::python::object process_fn = class_.attr("process_spiral_recon_data");
                 auto pyrecon_data = boost::python::object(*recon_data->getObjectPtr());
                 int res = boost::python::extract<int>(process_fn(pyrecon_data));
                 if (res != GADGET_OK) {
