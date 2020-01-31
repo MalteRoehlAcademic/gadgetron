@@ -278,9 +278,9 @@ struct IsmrmrdReconDataSpiral_from_python_object {
 
 
 
-    uint16_t lengthsl = bp::extract<uint16_t>(pySampling.attr("number_of_slices"));
-    uint16_t lengthav = bp::extract<uint16_t>(pySampling.attr("number_of_averages"));
-    uint16_t lengthrep = bp::extract<uint16_t>(pySampling.attr("number_of_repetitions"));
+    uint16_t lengthsl = bp::extract<uint16_t>(pyDataSpiral.attr("number_of_slices"));
+    uint16_t lengthav = bp::extract<uint16_t>(pyDataSpiral.attr("number_of_averages"));
+    uint16_t lengthrep = bp::extract<uint16_t>(pyDataSpiral.attr("number_of_repetitions"));
 
     sampling.averages_.resize(lengthav);
     sampling.slices_.resize(lengthsl);
