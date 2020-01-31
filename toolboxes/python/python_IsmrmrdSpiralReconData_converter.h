@@ -221,13 +221,14 @@ struct IsmrmrdReconDataSpiral_from_python_object {
     result.trajectory_ = bp::extract<hoNDArray<float>>(pyDataSpiral.attr("trajectory"));
     result.density_ = bp::extract<hoNDArray<float>>(pyDataSpiral.attr("density"));
 
-    bp::object pyresult = pyDataSpiral.attr("result")();
 
-
-    if (pyresult.ptr() == bp::object())
-      int testooo = 1;
     if (PyObject_HasAttrString(pyDataSpiral.ptr(),"result"))
-      result.result_ = bp::extract<hoNDArray<std::complex<float>>>(pyDataSpiral.attr("result"));
+    {
+      bp::object test = bp::extract<hoNDArray<std::complex<float>>>(pyDataSpiral.attr("result"));
+      if (!test.is_none())
+        result.result_ = bp::extract<hoNDArray<std::complex<float>>>(pyDataSpiral.attr("result"));
+    }
+      
 
     if (PyObject_HasAttrString(pyDataSpiral.ptr(),"field_map"))
       result.field_map_ = bp::extract<hoNDArray<float>>(pyDataSpiral.attr("field_map"));
