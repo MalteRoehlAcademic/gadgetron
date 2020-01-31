@@ -195,8 +195,8 @@ namespace Gadgetron
     //7D, fixed order [X, Y, Average, SLICE, Repetition]
     hoNDArray<float> inverse_motion_field_;
 
-    //7D, fixed order [X, Y, Average, SLICE, Repetition]
-    hoNDArray<unsigned short> mask_;
+    //7D, fixed order [X, Y, SLICE]
+    hoNDArray<float> mask_;
 
     bool has_result_ = false;
     bool has_field_map_ = false;
@@ -309,7 +309,7 @@ namespace Gadgetron
             if (this->mask_.get_data_ptr())
                 if (this->mask_.delete_data_on_destruct()) this->mask_.clear();
              else 
-                this->mask_ = hoNDArray<unsigned short>();
+                this->mask_ = hoNDArray<float>();
             this->mask_.copyFrom(obj.mask_);
         }   
 
@@ -457,12 +457,12 @@ namespace Gadgetron
             if (this->mask_.get_data_ptr())
                 if (this->mask_.delete_data_on_destruct()) this->mask_.clear();
              else 
-                this->mask_ = hoNDArray<unsigned short>();
+                this->mask_ = hoNDArray<float>();
             this->mask_.copyFrom(other.mask_);
         }
         else
         {
-            this->mask_ = hoNDArray<unsigned short>();
+            this->mask_ = hoNDArray<float>();
         }
 
         

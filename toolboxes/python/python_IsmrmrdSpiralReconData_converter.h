@@ -245,7 +245,7 @@ struct IsmrmrdReconDataSpiral_from_python_object {
     if (has_inverse_motion_field_)
       result.inverse_motion_field_ = bp::extract<hoNDArray<float>>(pyDataSpiral.attr("inverse_motion_field"));
     if (has_mask_)
-      result.mask_ = bp::extract<hoNDArray<unsigned short>>(pyDataSpiral.attr("mask"));
+      result.mask_ = bp::extract<hoNDArray<float>>(pyDataSpiral.attr("mask"));
       
 
     auto pySampling = pyDataSpiral.attr("sampling");
