@@ -24,7 +24,7 @@ namespace Gadgetron{
     }
 
     template<class TH, class TD> int return_data(TH header, boost::python::object arr, const char* meta = 0);
-    template<class TH, class TD, class TE> int return_data_acq(TH header, boost::python::object arr, boost::python::object arr2);
+    template<class TH, class TD, class TE> int return_data_traj(TH header, boost::python::object arr, boost::python::object arr2);
     int return_acquisition(ISMRMRD::AcquisitionHeader acq, boost::python::object arr);
     int return_acquisition_traj(ISMRMRD::AcquisitionHeader acq, boost::python::object arr, boost::python::object arr2);
     int return_recondata(boost::python::object arr);
