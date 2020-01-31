@@ -198,6 +198,15 @@ namespace Gadgetron
     //7D, fixed order [X, Y, Average, SLICE, Repetition]
     hoNDArray<unsigned short> mask_;
 
+    bool has_result_ = false;
+    bool has_field_map_ = false;
+    bool has_t2_star_map_ = false;
+    bool has_csm_ = false;
+    bool has_reg_ = false;
+    bool has_motion_field_ = false;
+    bool has_inverse_motion_field_ = false;
+    bool has_mask_ = false;
+
     SpiralSamplingDescription sampling_;
 
     GenericSpiralReconJob() {}

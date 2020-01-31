@@ -43,36 +43,36 @@ private:
 
     auto result = bp::object();
     if (dataSpiral.result_.get_data_ptr())
-      auto result = bp::object(dataSpiral.result_) ;
+      result = bp::object(dataSpiral.result_) ;
 
     auto field_map = bp::object();
     if (dataSpiral.field_map_.get_data_ptr())
-      auto field_map = bp::object(dataSpiral.field_map_) ;
+      field_map = bp::object(dataSpiral.field_map_) ;
 
     auto t2_star_map = bp::object();
     if (dataSpiral.t2_star_map_.get_data_ptr())
-      auto t2_star_map = bp::object(dataSpiral.t2_star_map_) ;
+      t2_star_map = bp::object(dataSpiral.t2_star_map_) ;
 
     auto csm = bp::object();
     if (dataSpiral.csm_.get_data_ptr())
-      auto csm = bp::object(dataSpiral.csm_) ;
+      csm = bp::object(dataSpiral.csm_) ;
     
     auto mask = bp::object();
     if (dataSpiral.mask_.get_data_ptr())
-      auto mask = bp::object(dataSpiral.mask_) ;
+      mask = bp::object(dataSpiral.mask_) ;
     
     auto motion_field = bp::object();
     if (dataSpiral.motion_field_.get_data_ptr())
-      auto motion_field = bp::object(dataSpiral.motion_field_) ;
+      motion_field = bp::object(dataSpiral.motion_field_) ;
     
     auto inverse_motion_field = bp::object();
     if (dataSpiral.inverse_motion_field_.get_data_ptr())
-      auto inverse_motion_field = bp::object(dataSpiral.inverse_motion_field_) ;
+      inverse_motion_field = bp::object(dataSpiral.inverse_motion_field_) ;
     
     auto reg = bp::object();
     if (dataSpiral.reg_.get_data_ptr())
-      auto reg = bp::object(dataSpiral.reg_) ;
-    
+      reg = bp::object(dataSpiral.reg_) ;
+
  
     auto sampling = SpiralSamplingDescriptionToPython(dataSpiral.sampling_);
 
@@ -221,35 +221,32 @@ struct IsmrmrdReconDataSpiral_from_python_object {
     result.trajectory_ = bp::extract<hoNDArray<float>>(pyDataSpiral.attr("trajectory"));
     result.density_ = bp::extract<hoNDArray<float>>(pyDataSpiral.attr("density"));
 
+    bool has_result_ = bp::extract<bool>(pyDataSpiral.attr("has_result_"));
+    bool has_field_map_ = bp::extract<bool>(pyDataSpiral.attr("has_field_map_"));
+    bool has_t2_star_map_ = bp::extract<bool>(pyDataSpiral.attr("has_t2_star_map_"));
+    bool has_csm_ = bp::extract<bool>(pyDataSpiral.attr("has_csm_"));
+    bool has_reg_ = bp::extract<bool>(pyDataSpiral.attr("has_reg_"));
+    bool has_motion_field_ = bp::extract<bool>(pyDataSpiral.attr("has_motion_field_"));
+    bool has_inverse_motion_field_ = bp::extract<bool>(pyDataSpiral.attr("has_inverse_motion_field_"));
+    bool has_mask_ = bp::extract<bool>(pyDataSpiral.attr("has_mask_"));
 
-    if (PyObject_HasAttrString(pyDataSpiral.ptr(),"result"))
-    {
-      auto test = bp::extract<hoNDArray<std::complex<float>>>(pyDataSpiral.attr("result"));
-      if (!test.ptr())
-        result.result_ = bp::extract<hoNDArray<std::complex<float>>>(pyDataSpiral.attr("result"));
-    }
-      
-
-    if (PyObject_HasAttrString(pyDataSpiral.ptr(),"field_map"))
+    if (has_result_)
+      result.result_ = bp::extract<hoNDArray<std::complex<float>>>(pyDataSpiral.attr("result"));
+    if (has_field_map_)
       result.field_map_ = bp::extract<hoNDArray<float>>(pyDataSpiral.attr("field_map"));
-
-    if (PyObject_HasAttrString(pyDataSpiral.ptr(),"t2_star_map"))
+    if (has_t2_star_map_)
       result.t2_star_map_ = bp::extract<hoNDArray<float>>(pyDataSpiral.attr("t2_star_map"));
-
-    if (PyObject_HasAttrString(pyDataSpiral.ptr(),"csm"))
+    if (has_csm_)
       result.csm_ = bp::extract<hoNDArray<std::complex<float>>>(pyDataSpiral.attr("csm"));
-
-    if (PyObject_HasAttrString(pyDataSpiral.ptr(),"reg"))
+    if (has_reg_)
       result.reg_ = bp::extract<hoNDArray<std::complex<float>>>(pyDataSpiral.attr("reg"));
-
-    if (PyObject_HasAttrString(pyDataSpiral.ptr(),"motion_field"))
+    if (has_motion_field_)
       result.motion_field_ = bp::extract<hoNDArray<float>>(pyDataSpiral.attr("motion_field"));
-
-    if (PyObject_HasAttrString(pyDataSpiral.ptr(),"inverse_motion_field"))
+    if (has_inverse_motion_field_)
       result.inverse_motion_field_ = bp::extract<hoNDArray<float>>(pyDataSpiral.attr("inverse_motion_field"));
-
-    if (PyObject_HasAttrString(pyDataSpiral.ptr(),"mask"))
+    if (has_mask_)
       result.mask_ = bp::extract<hoNDArray<unsigned short>>(pyDataSpiral.attr("mask"));
+      
 
     auto pySampling = pyDataSpiral.attr("sampling");
     SpiralSamplingDescription sampling;
@@ -281,27 +278,22 @@ struct IsmrmrdReconDataSpiral_from_python_object {
 
 
 
-    auto pySlices = pyDataSpiral.attr("slices");
-    auto pyAverages = pyDataSpiral.attr("averages");
-    auto pyRepetitions = pyDataSpiral.attr("repetitions");
-
-    auto lengthsl = bp::len(pySlices);
-    auto lengthav = bp::len(pyAverages);
-    auto lengthrep = bp::len(pyRepetitions);
+    uint16_t lengthsl = bp::extract<uint16_t>(pyDataSpiral.attr("number_of_slices"));
+    uint16_t lengthav = bp::extract<uint16_t>(pyDataSpiral.attr("number_of_averages"));
+    uint16_t lengthrep = bp::extract<uint16_t>(pyDataSpiral.attr("number_of_repetitions"));
 
     sampling.averages_.resize(lengthav);
     sampling.slices_.resize(lengthsl);
     sampling.repetitions_.resize(lengthrep);
 
-    auto sl = bp::list();
+   
     for (size_t ii =0; ii < lengthsl;ii++)
       sampling.slices_[ii] = bp::extract<uint16_t>(pySampling.attr("slices")[ii]);
 
-    auto av = bp::list();
+
     for (size_t ii =0; ii < lengthav;ii++)
       sampling.averages_[ii] = bp::extract<uint16_t>(pySampling.attr("averages")[ii]);
 
-    auto re = bp::list();
     for (size_t ii =0; ii < lengthrep;ii++)
       sampling.repetitions_[ii] = bp::extract<uint16_t>(pySampling.attr("repetitions")[ii]);
 

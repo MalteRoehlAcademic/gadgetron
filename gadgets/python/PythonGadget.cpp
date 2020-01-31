@@ -14,8 +14,19 @@ namespace Gadgetron {
                 hma->release();
                 return GADGET_FAIL;;
             }
-            GadgetContainerMessage< ISMRMRD::MetaContainer>* mmb = AsContainerMessage< ISMRMRD::MetaContainer >(dmb->cont());
-            return this->process(hma, dmb, mmb);
+            GadgetContainerMessage< hoNDArray<float> >* traj = AsContainerMessage< hoNDArray< float > >(hma->cont()->cont());
+            if (traj)
+            {
+                return this->process(hma, dmb, traj);
+            }
+            else
+            {
+                GadgetContainerMessage< ISMRMRD::MetaContainer>* mmb = AsContainerMessage< ISMRMRD::MetaContainer >(dmb->cont());
+                if (!mmb)
+                    mmb = new  GadgetContainerMessage< ISMRMRD::MetaContainer>();
+                return this->process(hma, dmb, mmb);
+            }
+
         }
         else
         {
@@ -80,6 +91,8 @@ namespace Gadgetron {
 
         if (hmi->cont()) {
             mmb = AsContainerMessage< ISMRMRD::MetaContainer >(hmi->cont()->cont());
+            if (!mmb)
+                mmb = new  GadgetContainerMessage< ISMRMRD::MetaContainer>();
         }
 
         switch (h->data_type) {
