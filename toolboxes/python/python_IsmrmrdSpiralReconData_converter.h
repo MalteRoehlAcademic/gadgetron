@@ -72,7 +72,7 @@ private:
     auto reg = bp::object();
     if (dataSpiral.reg_.get_data_ptr())
       auto reg = bp::object(dataSpiral.reg_) ;
-    
+
  
     auto sampling = SpiralSamplingDescriptionToPython(dataSpiral.sampling_);
 
@@ -220,6 +220,16 @@ struct IsmrmrdReconDataSpiral_from_python_object {
     result.data_ = bp::extract<hoNDArray<std::complex<float>>>(pyDataSpiral.attr("data"));
     result.trajectory_ = bp::extract<hoNDArray<float>>(pyDataSpiral.attr("trajectory"));
     result.density_ = bp::extract<hoNDArray<float>>(pyDataSpiral.attr("density"));
+
+    bool has_result_ = bp::extract<bool>(pyDataSpiral.attr("has_result_"));
+    bool has_field_map_ = bp::extract<bool>(pyDataSpiral.attr("has_field_map_"));
+    bool has_t2_star_map_ = bp::extract<bool>(pyDataSpiral.attr("has_t2_star_map_"));
+    bool has_csm_ = bp::extract<bool>(pyDataSpiral.attr("has_csm_"));
+    bool has_reg_ = bp::extract<bool>(pyDataSpiral.attr("has_reg_"));
+    bool has_motion_field_ = bp::extract<bool>(pyDataSpiral.attr("has_motion_field_"));
+    bool has_inverse_motion_field_ = bp::extract<bool>(pyDataSpiral.attr("has_inverse_motion_field_"));
+    bool has_mask_ = bp::extract<bool>(pyDataSpiral.attr("has_mask_"));
+
     /*
     auto test3 = bp::extract<hoNDArray<std::complex<float>>>(pyDataSpiral.attr("data"));
       if (test3.m_data.stage1.convertible != 0x0)
